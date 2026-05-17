@@ -57,7 +57,7 @@ jobs:
       uses: testingsoul/zap-annotations@v1
       with:
         severities: "Critical,High,Medium"
-        report_dir: "test/output"
+        report-dir: "test/output"
       env:
         GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
 
