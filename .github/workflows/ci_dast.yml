@@ -1,0 +1,88 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Test Execution
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      checks: write
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+    - name: Install requirements
+      run: |
+        pip install -r test/requirements.txt
+    - name: Start ZAP via Docker
+      run: |
+        docker run -u zap -p 8080:8080 -d zaproxy/zap-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=change-me-9203935709
+    - name: Wait for ZAP to be ready
+      run: |
+        sleep 60
+    - name: Run DAST tests
+      run: |
+        cd test && behave -t @dast --junit --junit-directory output
+    - name: Upload Acceptance Test Results
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: acceptance-tests-results
+        path: test/output/TESTS-*.xml
+        retention-days: 1
+    - name: Upload ZAP HTML Reports
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: zap-html-reports
+        path: test/output/zapreport-*.html
+        retention-days: 3
+    - name: Run ZAP Annotation
+      if: ${{ always() && github.event_name == 'pull_request' }}
+      uses: testingsoul/zap-annotations@v1
+      with:
+        severities: "Critical,High,Medium"
+        report_dir: "test/output"
+      env:
+        GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+
+  publish-acceptance-test-results:
+    name: "Publish Acceptance Tests Results"
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+    if: success() || failure()
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Download Acceptance test Artifacts
+        uses: actions/download-artifact@v7
+        with:
+          name: acceptance-tests-results
+          path: acceptance-tests-results
+
+      - name: Publish Acceptance Test Results
+        uses: EnricoMi/publish-unit-test-result-action/linux@v2
+        with:
+          files: acceptance-tests-results/*.xml
+          comment_title: "Acceptance Tests Results"
