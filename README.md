@@ -1,4 +1,4 @@
-# CI_testDAST_behave
+# behave-zap Learning
 
 Learning repository for the `behave-zap` Python library, showing how to combine:
 - Behave + Selenium functional automation
