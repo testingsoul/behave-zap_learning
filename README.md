@@ -97,6 +97,32 @@ source venv/bin/activate
 behave
 ```
 
+### Run Against Local OWASP Juice Shop
+
+You can run the same Behave and DAST steps against a local Juice Shop instance.
+
+1. Start Juice Shop locally (Docker)
+```bash
+docker run --rm -p 3000:3000 bkimminich/juice-shop
+```
+
+2. Use local test configuration
+```bash
+cd test
+cp conf/local-properties.cfg conf/properties.cfg
+```
+
+Notes:
+- `test/environment.py` loads `conf/properties.cfg`, so copying `local-properties.cfg` is the fastest way to switch to local execution.
+- `local-properties.cfg` already points to `url: http://localhost:3000`.
+
+3. Run the same functional steps
+```bash
+cd test
+source venv/bin/activate
+behave
+```
+
 2. Start ZAP daemon (Docker)
 ```bash
 docker run -u zap -p 8080:8080 -d zaproxy/zap-stable \

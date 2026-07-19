@@ -4,6 +4,7 @@ from behave import step
 
 from pageobjects.login import LoginPageObject
 from pageobjects.main_page import MainPagePageObject
+from selenium.webdriver.common.keys import Keys
 
 
 @step('I go to customer feedback page')
@@ -17,8 +18,9 @@ def step_impl(context, search_term):
     MainPagePageObject().home.click()
     MainPagePageObject().search_button.click()
     MainPagePageObject().search.text = search_term
+    MainPagePageObject().search.find().send_keys(Keys.ENTER)
     time.sleep(1)  # Wait for the search results to load
-
+    
 @step('I add item to cart')
 def step_impl(context):
     MainPagePageObject().add_first_visible_product_to_cart()

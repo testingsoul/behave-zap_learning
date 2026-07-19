@@ -27,5 +27,6 @@ dist-ssr
 test/reports
 test/output
 test/venv
+test/conf/local-*.cfg
 test/__pycache__
 test/*/__pycache__
