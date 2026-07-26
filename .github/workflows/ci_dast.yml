@@ -29,13 +29,23 @@ jobs:
     - name: Install requirements
       run: |
         pip install -r test/requirements.txt
-    - name: Start ZAP via Docker
+    - name: Start OWASP Juice Shop
       run: |
-        docker run -u zap -p 8080:8080 -d zaproxy/zap-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=change-me-9203935709
-    - name: Wait for ZAP to be ready
+        docker run --rm -d -p 3000:3000 --name juice-shop bkimminich/juice-shop
+    - name: Wait for Juice Shop to be ready
       run: |
-        sleep 60
+        for i in $(seq 1 30); do
+          if curl -sSf http://localhost:3000 > /dev/null; then
+            echo "Juice Shop is up"
+            exit 0
+          fi
+          echo "Waiting for Juice Shop... ($i)"
+          sleep 5
+        done
+        echo "Juice Shop did not become ready in time" >&2
+        exit 1
     - name: Run DAST tests
+      # ZAP is launched by behave-zap itself (dockerized: true in conf/properties.cfg)
       run: |
         cd test && behave -t @dast --junit --junit-directory output
     - name: Upload Acceptance Test Results
@@ -57,7 +67,7 @@ jobs:
       uses: testingsoul/zap-annotations@v1
       with:
         severities: "Critical,High,Medium"
-        report_dir: "test/output"
+        report-dir: "test/output"
       env:
         GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
 

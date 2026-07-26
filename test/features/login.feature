@@ -3,8 +3,7 @@ Feature: CI Juice Shop Login
 
   Background:  
     Given I open the Juice Shop
-
-
+    
   Scenario: Login into Juice Shop with invalid user
     When I login into Juice Shop with user "fake_user" and password "Test@123"
     Then I should see an error message
@@ -20,7 +19,7 @@ Feature: CI Juice Shop Login
     Then the submit button is disabled
     And I refresh the page
 
-  @dast1
+  @dast
   Scenario: Login into Juice Shop
     When I login into Juice Shop with default user
     Then the default user is logged in

@@ -44,8 +44,11 @@ def step_impl(context):
 
 @step('I create user on Juice Shop')
 def step_impl(context):
-    
-    LoginPageObject().create_user()
+    if context.table:
+        user = dict([context.table.headings] + [row.cells for row in context.table.rows])
+        LoginPageObject().create_user(user.get('username'), user.get('password'))
+    else:
+        LoginPageObject().create_user()
     time.sleep(2)  # Wait for the login to complete
 
 

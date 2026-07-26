@@ -1,1 +1,1 @@
-behave-zap==0.2.0
+behave-zap==1.0.0

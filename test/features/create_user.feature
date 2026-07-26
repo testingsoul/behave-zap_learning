@@ -7,4 +7,6 @@ Feature: CI Juice Shop Create User
   @dast
   Scenario: Create User Juice Shop
     Given I create user on Juice Shop
+      | username | testuser@juice-sh.op |
+      | password | Test@1234            |
 
