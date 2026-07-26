@@ -1,8 +1,20 @@
+; Starting point for LOCAL runs against a Juice Shop instance on
+; http://localhost:3000. Copy it over the config Behave actually reads:
+;
+;     cp conf/local-properties.cfg.example conf/properties.cfg
+;
+; Differences from the committed conf/properties.cfg (which targets CI):
+;   - headless: false    -> you can watch the browser drive the app
+;   - dockerized: false  -> you start the ZAP daemon yourself (see README)
+;
+; conf/local-*.cfg is gitignored, so you can also keep a personal copy at
+; conf/local-properties.cfg without it showing up in git status.
+
 [Driver]
 # Driver options
 implicitly_wait: 5
 explicitly_wait: 10
-headless: true
+headless: false
 
 [Capabilities]
 # Selenium capabilities: https://www.selenium.dev/documentation/webdriver/drivers/options/
@@ -18,21 +30,28 @@ allow-running-insecure-content: true
 disable-web-security: true
 disable-component-update: true
 disable-background-networking: true
-proxy-bypass-list: <-loopback> 
+proxy-bypass-list: <-loopback>
 
 [Test]
+# Other public Juice Shop instances, in case you prefer not to run it locally:
+# url: https://jshop.mate.academy/#/
+# url: https://juice-shop.herokuapp.com/
+# url: https://preview.owasp-juice.shop
 url: http://localhost:3000
 username: admin@juice-sh.op
 password: admin123
 
 [DAST]
-# true = behave-zap starts and stops the ZAP daemon container itself, which is
-# what CI relies on (.github/workflows/ci_dast.yml has no ZAP step).
-# Set it to false locally if you prefer to run ZAP yourself:
-#   zaproxy -daemon -config api.key=change-me-9203935709
-dockerized: true
+# false = you run ZAP yourself, e.g.
+#   docker run -u zap -p 8080:8080 -d zaproxy/zap-stable \
+#     zap.sh -daemon -host 0.0.0.0 -port 8080 \
+#     -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true \
+#     -config api.key=change-me-9203935709
+# true = behave-zap starts and stops the ZAP container for you.
+dockerized: false
 api_key: change-me-9203935709
 proxy-server: 0.0.0.0:8080
+
 # Enable/Disable passive scan
 pscan: true
 
@@ -48,7 +67,7 @@ targets_product_basket: http://localhost:3000/assets,http://localhost:3000/rest/
 targets_product_checkout: http://localhost:3000/api/Addresss,http://localhost:3000/api/Deliverys,http://localhost:3000/rest/wallet/balance,http://localhost:3000/rest/admin/application-configuration,http://localhost:3000/api/Cards,http://localhost:3000/rest/basket,http://localhost:3000/rest/track-order,http://localhost:3000/api
 
 # Targets/regex patterns to exclude from DAST (comma separated)
-# Google-related domains are commonly excluded to avoid false positives and unnecessary scanning of third-party resources. 
+# Google-related domains are commonly excluded to avoid false positives and unnecessary scanning of third-party resources.
 # Adjust the patterns as needed for your specific application and testing requirements.
 exclude_targets: .*cloudflare.*,.*google.*,.*android.*,.*doubleclick.net.*,.*youtube.com.*
 

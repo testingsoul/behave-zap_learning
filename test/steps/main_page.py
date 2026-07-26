@@ -11,7 +11,12 @@ from selenium.webdriver.common.keys import Keys
 def step_impl(context):
     MainPagePageObject().side_menu.click()
     MainPagePageObject().customer_feedback.click()
-    
+
+@step('I go to complaint page')
+def step_impl(context):
+    MainPagePageObject().side_menu.click()
+    MainPagePageObject().complaint.click()
+
 
 @step('I search for "{search_term}"')
 def step_impl(context, search_term):

@@ -12,6 +12,7 @@ class MainPagePageObject(PageObject):
         self.cookie_consent = Button(By.XPATH, "//a[@aria-label='dismiss cookie message']")
         self.side_menu = Button(By.XPATH, "//button[@aria-label='Open Sidenav']")
         self.customer_feedback = Button(By.XPATH, "//a[@aria-label='Go to contact us page']")
+        self.complaint = Button(By.XPATH, "//a[@aria-label='Go to complain page']")
         self.search_button = Button(By.ID, "searchQuery")
         self.search = InputText(By.CSS_SELECTOR, "#searchQuery input")
         self.home = Button(By.ID, "homeButton")

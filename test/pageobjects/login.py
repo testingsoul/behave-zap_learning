@@ -77,23 +77,30 @@ class LoginPageObject(PageObject):
         if username != "" and password != "":
             self.submit.click()
 
-    def create_user(self):
-        """ Fill login form and submit it
+    def create_user(self, username=None, password=None):
+        """ Fill registration form and submit it
 
-        :param user: dict with username and password values
+        :param username: username to register; falls back to config when empty
+        :param password: password to register; falls back to config when empty
         :returns: secure area page object instance
         """
         self.account_menu.click()
         self.login_link.click()
-        
+
 
         self.wait_until_loaded()
         time.sleep(2)
         self.new_customer.click()
-        user = {
-            'username': self.config.get('Test', 'username'),
-            'password': self.config.get('Test', 'password')
-        }
+        if username or password:
+            user = {
+                'username': username,
+                'password': password
+            }
+        else:
+            user = {
+                'username': self.config.get('Test', 'username'),
+                'password': self.config.get('Test', 'password')
+            }
         self.new_username.text = user['username']
         self.new_password.text = user['password']
         self.rep_password.text = user['password']

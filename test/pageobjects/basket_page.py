@@ -7,6 +7,7 @@ class BasketPageObject(PageObject):
     def init_page_elements(self):
         self.delete_item = Button(By.XPATH, "//mat-row[1]/mat-cell[5]//button")
         self.sum_item = Button(By.XPATH, "//mat-row[1]/mat-cell[3]//button[2]")
+        self.ckeckout = Button(By.ID, "checkoutButton")
 
 
 
