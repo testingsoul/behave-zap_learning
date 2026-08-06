@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 
-from behave_zap import PageObject, InputText, Button
+from behave_zap import PageObject, Button
 
 
 class BasketPageObject(PageObject):

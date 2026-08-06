@@ -31,7 +31,7 @@ jobs:
         pip install -r test/requirements.txt
     - name: Start OWASP Juice Shop
       run: |
-        docker run --rm -d -p 3000:3000 --name juice-shop bkimminich/juice-shop
+        docker run --rm -d -p 3000:3000 --name juice-shop bkimminich/juice-shop:v20.1.1
     - name: Wait for Juice Shop to be ready
       run: |
         for i in $(seq 1 30); do
